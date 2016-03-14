@@ -124,3 +124,7 @@ blockquote p {
   width: 100%;
   margin-bottom: 40px;
 }
+
+p {
+    text-indent:  2em;
+}

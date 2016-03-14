@@ -1,43 +1,43 @@
 permalink: /:year/:month/:day/:title.html
 paginate: 10
-markdown: redcarpet
+markdown: kramdown
 
 # 作者信息
 author: 
   name: wfwu
   email: wenfenwu@qq.com
   link: http://wfwu.github.io
-#  weibo: http://weibo.com/orangeissweet
+#  weibo: http://weibo.com/dunyixu
   github: http://github.com/wfwu
-#  music: http://site.douban.com/linanya
-#  linkedin: https://www.linkedin.com/pub/anya-lin/81/91/232
+#  twitter: https://twitter.com/dunyixu
+# linkedin: 
 
 # 站点信息
-title: 有只叫猫的猫
+title: 会叫猫~的猫
 description: My personal blog
 url: http://wfwu.github.io
 rss_url: /pages/atom.xml
 
 # gavatar头像及Favicon
-gavatar: /public/img/deer3.png
-favicon: /public/img/deer3.png
+gavatar: /public/img/icon.png
+favicon: /public/img/icon.png
 
 # google analytics 设置
 ga:
-  id: UA-54262064-1 
-  url: painterlin.com
+  id: UA-75069081-1
+  url: wfwu.github.io
 
 # disqus 设置
 disqus:
-  shortname: painterlin
+  shortname: wfwu
 
 # 主题设置，自动激活某个标签
 active: 读书
 
 # 首页除了最新文章外显示分类
 cates: 
-  - Optimization
-  - LaTeX
+  - 工具
+  - 技术
 
 # 中文本地化
 locals:
