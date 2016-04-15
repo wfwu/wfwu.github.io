@@ -175,10 +175,7 @@ $$ \upsilon(x,y) = \frac{log(\omega(x,y)*(\beta-1)+1)}{log(\beta)} $$
 
 **双边滤波公式**
 
-$$ 
-BF[I]_\vec{p} = \frac {1}{W_\vec{p}}\sum G_{\sigma_s}(||\vec{p}-\vec{q}||)G_{\\sigma_r}(|I_\vec{p}-I_\vec{q}|)I_\vec{q}
-
- $$
+$$ BF[I]_\vec{p} = \frac {1}{W_\vec{p}}\sum G_{\sigma_s}(||\vec{p}-\vec{q}||)G_{\sigma_r}(|I_\vec{p}-I_\vec{q}|)I_\vec{q}$$
 
 其中：
   $$I_\vec{q}$$为输入图像在位置q处的像素，$$BF[I]_\vec{p}$$为处理后输出像素，$$W_\vec{p}$$为P处邻域内归一化值，$$G_\sigma (x)=e^{-\frac{x^2}{\sigma^2}}$$用来计算滤波系数和像素差滤波系数的高斯函数。
