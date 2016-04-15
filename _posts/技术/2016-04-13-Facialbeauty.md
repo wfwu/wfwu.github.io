@@ -65,7 +65,7 @@ $$
 下图分别为肤色肤色统计特性与高斯肤色模型：
 
 
-<table><tr><td><img src="/public/img/2016/04/15/skin_gauss.png" width="50%"></td><td><img src="/public/img/2016/04/15/gauss.jpg" width="50%" ></td></tr></table>
+<table><tr><td><img src="/public/img/2016/04/15/skin_gauss.png" ></td><td><img src="/public/img/2016/04/15/gauss.jpg" ></td></tr></table>
 
 
 **相似度计算公式**
