@@ -40,7 +40,10 @@ tags:
 
 **YCrCb色彩空间**
 
-![cgi_principle](/public/img/2016/04/15/RGB2YCbCr.png)
+{% include image.html
+            img="public/img/2016/04/15/RGB2YCbCr.png"
+            title="image.html模板"
+            caption="RGB空间转换到YCrCb空间" %}
 
 * Y亮度分量
 * Cb蓝色色度
@@ -59,7 +62,11 @@ $$
 
 对大量人种肤色样本的研究后发现，肤色在YCrCb色彩空间呈现二位高斯分布特性，称为混合高斯模型。
 
-![cgi_principle](/public/img/2016/04/15/skin_gauss.png)
+下图分别为肤色肤色统计特性与高斯肤色模型：
+
+
+<table><tr><td><img src="/public/img/2016/04/15/skin_gauss.png" ></td><td><img src="/public/img/2016/04/15/gauss.jpg" ></td></tr></table>
+
 
 **相似度计算公式**
 
@@ -67,9 +74,9 @@ $$ p(x) = exp[-0.5 *(x-\mu)^T\sigma(x-\mu)] $$
 
 说明：
 
-1. x=$$[Cr,Cb]^T$$为像素点在CrCb空间中的向量，$$\mu$$为均值 $$\sigma$$为方差。
+1.x=$$[Cr,Cb]^T$$为像素点在CrCb空间中的向量，$$\mu$$为均值 $$\sigma$$为方差。
 
-2. 依照公式训练参数$$\mu$$和$$\sigma$$:
+2.依照公式训练参数$$\mu$$和$$\sigma$$:
 
  $$\mu = (156.5599,117.4361)^T$$
 
@@ -107,32 +114,92 @@ $$ \upsilon(x,y) = \frac{log(\omega(x,y)*(\beta-1)+1)}{log(\beta)} $$
 
 ![cgi_principle](/public/img/2016/04/15/log_curve.png)
 
-#### 2.1 FastCGI原理
+#### 2.3 算法评测
+
+{% include image.html
+            img="public/img/2016/04/15/whiten_src.jpg"
+            title="image.html模板"
+            caption="原图" %}
+
+当$$\beta=2 $$、$$\beta=5 $$时：
+
+<table><tr><td><img src="/public/img/2016/04/15/whiten_2.jpg" ></td><td><img src="/public/img/2016/04/15/whiten_5.jpg" ></td></tr></table>
+
+### 3 磨皮祛斑
+
+#### 3.1 引言
 
 --------------------------------
 
-FastCGI的处理流程如下图所示：
+磨皮处理本质上是一个滤波的过程，但是滤波算法的设计上必须满足对面部的斑点，即噪声有很好的滤除作用；同时还要保证边缘不被滤除，即保边；甚至优秀的磨皮算法还要保证处理后皮肤的质感。本文介绍两种算法：基于双指数边缘保留算法和双边滤波算法。
 
-
-![fastcgi_principle](/public/img/2016/02/24/fastcgi_principle.png)
-
-
-流程说明：
-
-1. Web服务器启动时启动并初始化FastCGI进程。 例如IIS ISAPI、apache mod_fastcgi、 nginx ngx_http_fastcgi、 lighttpd mod_fastcgi。
-2. FastCGI进程管理器自身初始化，启动多个CGI解释器进程并等待来自Web 服务器的连接。（启动FastCGI进程时，可以配置以ip和UNIX域socket两种方式启动）
-3. 当客户端请求Web服务器时， Web服务器将请求采用socket方式发送到FastCGI主进程。FastCGI主进程选择并连接到一个CGI解释器。Web 服务器将CGI环境变量和标准输入发送到FastCGI子进程
-4. FastCGI子进程完成处理后将标准输出和错误信息从同一socket连接返回Web 服务器。当FastCGI子进程关闭连接时，请求便处理完成。
-5. Web服务器利用FastCGI主进程返回的结果构建HTTP Response响应客户端。
-
-#### 2.2 小结
+#### 3.2 双指数边缘保留算法
 
 --------------------------------
 
-FastCGI程序并不需要不断的创建、消亡新进程，从而大大提高了效率，从[FastCGI官网](http://www.fastcgi.com/drupal/node/6?q=node/15)给出的数据，其效率至少比CGI高出5倍。同时
-它还支持分布式部署，可以将FastCGI程序放在Web服务器以外的专门的应用服务器上。
+在《Bi-Exponential Edge-Preserving Smoother》一文中提出了一个算法流程：
 
-### 3 总结
+![cgi_principle](/public/img/2016/04/15/BEEP.jpg)
 
-> FastCGI像是一个常驻(long-live)型的CGI，它可以一直执行着，只要激活后，不会每次都要花费时间去fork一次(这是CGI最为人诟病的fork-and-execute 模式)。它还支持分布式的运算, 即 FastCGI 程序可以在网站服务器以外的主机上执行并且接受来自其它网站服务器来的请求。
-> FastCGI是语言无关的、可伸缩架构的CGI开放扩展，其主要行为是将CGI解释器进程保持在内存中并因此获得较高的性能。众所周知，CGI解释器的反复加载是CGI性能低下的主要原因，如果CGI解释器保持在内存中并接受FastCGI进程管理器调度，则可以提供良好的性能、伸缩性、Fail- Over特性等等。
+主要是有三个过程组成：
+
+* 前向迭代（1）
+* 反向迭代（3）
+* 加权合并两个结果（5）
+
+然而上述是个一维的过程，对于二维的图像数据，论文中也给出了解决方式：
+
+- 对原始图像进行一次水平迭代计算，然后再进行垂直迭代计算，该过程称之为BEEPSHorizontalVertical。
+- 对原始图像进行一次垂直迭代计算，再对其进行垂直迭代计算，该过程称之为BEEPSVerticalHorizontal。
+- 滤波后的图像结果为（BEEPSHorizontalVertical+BEEPSVerticalHorizontal）/2。
+
+#### 3.3 双指数边缘保留算法评测
+
+--------------------------------
+
+取$$\lambda$$=0.995,$$\theta$$=20,算法处理效果：
+
+<table><tr><td><img src="/public/img/2016/04/15/beaute_src.jpg" ></td><td><img src="/public/img/2016/04/15/beaute_1.jpg" ></td></tr></table>
+
+#### 3.4 双边滤波器
+
+--------------------------------
+
+参照《Bilateral Filtering for Gray and Color Images》（C. Tomasi）
+
+双边滤波器是一种可以保边去噪的滤波器。该滤波器主要由两个函数组成，一个函数是几何空间距离决定的滤波系数，另一个函数是由像素差值决定的滤波系数。
+
+**基本原理**
+
+![cgi_principle](/public/img/2016/04/15/bilateral_filter.jpg)
+
+**双边滤波公式**
+
+$$ 
+BF[I]_\vec{p} = \frac {1}{W_\vec{p}}\sum G_{\sigma_s}(||\vec{p}-\vec{q}||)G_{\\sigma_r}(|I_\vec{p}-I_\vec{q}|)I_\vec{q}
+
+ $$
+
+其中：
+  $$I_\vec{q}$$为输入图像在位置q处的像素，$$BF[I]_\vec{p}$$为处理后输出像素，$$W_\vec{p}$$为P处邻域内归一化值，$$G_\sigma (x)=e^{-\frac{x^2}{\sigma^2}}$$用来计算滤波系数和像素差滤波系数的高斯函数。
+
+#### 3.5 算法评测
+
+取领域 d=15,$$\sigma_s=\sigma_r=50$$时：
+
+<table><tr><td><img src="/public/img/2016/04/15/beaute_src.jpg" ></td><td><img src="/public/img/2016/04/15/beaute_2.jpg" ></td></tr></table>
+
+### 4 整合效果
+
+将高斯肤色模型、Logarithmic curve变换、双边滤波算法整合，得出效果图：
+
+![cgi_principle](/public/img/2016/04/15/d5.jpg)
+
+![cgi_principle](/public/img/2016/04/15/d3.png)
+
+![cgi_principle](/public/img/2016/04/15/d2.jpg)
+
+![cgi_principle](/public/img/2016/04/15/d3.jpg)
+
+![cgi_principle](/public/img/2016/04/15/d4.png)
+
