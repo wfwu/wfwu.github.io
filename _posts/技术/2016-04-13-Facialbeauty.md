@@ -9,7 +9,7 @@ description:
 categories:
   - 技术
 tags:
-  - c
+  - cpp
   - 图像处理
 ---
 
