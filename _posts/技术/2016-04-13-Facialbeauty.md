@@ -200,3 +200,4 @@ $$ BF[I]_\vec{p} = \frac {1}{W_\vec{p}}\sum G_{\sigma_s}(||\vec{p}-\vec{q}||)G_{
 
 ![cgi_principle](/public/img/2016/04/15/d4.png)
 
+![cgi_principle](/public/img/2016/04/18/d11.jpg)
